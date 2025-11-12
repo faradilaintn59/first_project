@@ -28,8 +28,8 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="#" class="menu-link"> 
-                        <div data-i18n="Basic">Tambah Data</div>
+                    <a href="{{ route('category.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-package"></i> <div data-i18n="Authentications">Katalog Produk</div>
                     </a>
                 </li>
             </ul>
