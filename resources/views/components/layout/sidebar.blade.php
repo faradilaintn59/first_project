@@ -23,13 +23,18 @@
         </li>
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-                <div data-i18n="Authentications">Katalog Produk</div>
+                <i class="menu-icon tf-icons bx bx-cube"></i>
+                <div data-i18n="Authentications">Master Data</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
                     <a href="{{ route('category.index') }}" class="menu-link">
-                        <i class="menu-icon tf-icons bx bx-package"></i> <div data-i18n="Authentications">Katalog Produk</div>
+                        <div data-i18n="Basic">Kategori</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('products.index') }}" class="menu-link">
+                        <div data-i18n="Basic">Produk</div>
                     </a>
                 </li>
             </ul>
