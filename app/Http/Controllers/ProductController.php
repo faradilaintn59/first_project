@@ -116,5 +116,11 @@ class ProductController extends Controller
         
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+
+    }
+
+    public function show(Product $product)
+    {
+        return view('products.show', compact('product'));
     }
 }

@@ -1,13 +1,29 @@
 <?php
 
+use App\Models\Product;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+
+// Rute untuk Keranjang Pesanan
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update/{product}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
+
+// Rute untuk Checkout (Hanya bisa diakses jika sudah login)
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+});
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    $products = Product::latest()->take(8)->get();
+    return view('user.home', compact('products'));
+})->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
