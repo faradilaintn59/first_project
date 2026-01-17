@@ -9,17 +9,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
-    /**
-     * Handle an incoming request.
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        // Mengecek apakah user sudah login DAN rolenya adalah 'admin'
-        if (Auth::check() && Auth::user()->role === 'admin') {
-            return $next($request);
+        // 1. Cek apakah user sudah login?
+        if (Auth::check()) {
+            
+            // 2. Cek apakah level usernya 'admin'?
+            // PENTING: Ganti 'usertype' dengan 'role' jika nama kolom di databasemu 'role'
+            if (Auth::user()->usertype === 'admin') { 
+                return $next($request); // Silakan masuk pak Eko!
+            }
+            
+            // 3. Kalau login tapi BUKAN admin, tendang ke halaman user (home)
+            return redirect('/')->with('error', 'Anda tidak punya akses ke halaman ini.');
         }
 
-        // Jika bukan admin, akses ditolak (Error 403) 
-        abort(403, 'Unauthorized');
+        // 4. Kalau belum login sama sekali, tendang ke halaman login
+        return redirect('/login');
     }
 }

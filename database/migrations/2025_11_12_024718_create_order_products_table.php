@@ -12,18 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('order_products', function (Blueprint $table) {
-        $table->id(); // Sesuai id (PK)
-        $table->unsignedBigInteger('order_id'); // Sesuai order_id (FK)
-        $table->unsignedBigInteger('product_id'); // Sesuai product_id (FK)
-        $table->integer('jumlah'); // Sesuai jumlah
-        $table->decimal('harga_satuan', 10, 2); // Sesuai harga_satuan
-        $table->timestamps(); // Sesuai created_at & updated_at
-
-        // Relasi ke tabel orders
-        $table->foreign('order_id')->references('id')->on('orders');
-        // Relasi ke tabel products
-        $table->foreign('product_id')->references('id')->on('products');
-    });
+            $table->id();
+            $table->integer("jumlah"); 
+            $table->decimal("harga_satuan", 10, 2); 
+            
+            // PENTING: Ubah menjadi string agar sama dengan ID di tabel orders 
+            $table->string('order_id'); 
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade'); 
+            
+            // Relasi ke tabel products 
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            
+            $table->timestamps();
+        });
     }
 
     /**

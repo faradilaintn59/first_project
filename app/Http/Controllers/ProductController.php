@@ -6,16 +6,21 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Storage; // PENTING: Jangan sampai lupa ini!
+use Illuminate\Support\Facades\Storage; 
 
 class ProductController extends Controller
 {
-    /**
-     * Menampilkan daftar produk
-     */
+    public function create(): View
+    {
+        $categories = Category::all(); 
+        
+        // Cek apakah folder views/products/create.blade.php benar-benar ada
+        return view('products.create', compact('categories'));
+    }
+    
     public function index(Request $request): View
     {
-        // Fitur Search + Pagination
+        // Gunakan 'kategori' sesuai dengan nama method relasi di Model Product kamu
         $products = Product::with('kategori')->when($request->input('search'), function ($query, $search) {
             $query->where('nama', 'like', '%' . $search . '%');
         })->paginate(10);
@@ -26,32 +31,24 @@ class ProductController extends Controller
     /**
      * Menampilkan form tambah produk
      */
-    public function create(): View
-    {
-        $categories = Category::all(); // Kita butuh ini untuk dropdown kategori
-        return view('products.create', compact('categories'));
-    }
+    
 
     /**
      * Menyimpan produk baru
      */
     public function store(Request $request)
     {
-        // 1. Validasi Input
         $request->validate([
             'nama' => 'required|string|max:255',
             'harga' => 'required|numeric',
             'stok' => 'required|numeric',
             'deskripsi' => 'required|string',
-            'foto' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Validasi Gambar
+            'foto' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'kategori_id' => 'required|exists:categories,id',
         ]);
 
-        // 2. Upload Foto
-        // Foto akan disimpan di folder: storage/app/public/foto
         $fotoPath = $request->file('foto')->store('foto', 'public');
 
-        // 3. Simpan ke Database
         Product::create([
             'nama' => $request->nama,
             'harga' => $request->harga,
@@ -89,13 +86,10 @@ class ProductController extends Controller
 
         $data = $request->except('foto');
 
-        // Cek apakah user mengupload foto baru?
         if ($request->hasFile('foto')) {
-            // Hapus foto lama biar gak nyampah
             if ($product->foto && Storage::disk('public')->exists($product->foto)) {
                 Storage::disk('public')->delete($product->foto);
             }
-            // Simpan foto baru
             $data['foto'] = $request->file('foto')->store('foto', 'public');
         }
 
@@ -109,14 +103,12 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Hapus file foto fisik dari storage
         if ($product->foto && Storage::disk('public')->exists($product->foto)) {
             Storage::disk('public')->delete($product->foto);
         }
         
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
-
     }
 
     public function show(Product $product)

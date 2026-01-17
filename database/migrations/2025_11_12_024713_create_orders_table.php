@@ -12,18 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-        $table->id(); // Sesuai id (PK)
-        $table->unsignedBigInteger('user_id'); // Sesuai user_id (FK)
-        $table->date('tanggal'); // Sesuai tanggal
-        $table->decimal('total', 12, 2); // Sesuai total
-        $table->string('bukti_pembayaran')->nullable(); // Sesuai bukti_pembayaran
-        $table->enum('status_pembayaran', ['pending', 'lunas', 'gagal', 'diproses']) // Sesuai status_pembayaran
-              ->default('pending'); 
-        $table->timestamps(); // Sesuai created_at & updated_at
+            $table->string('id')->primary(); 
+            $table->unsignedBigInteger('user_id');
+            $table->date('tanggal'); 
+            $table->decimal('total', 12, 2); 
+            
+            // Tambahan kolom untuk pengiriman & pembayaran 
+            $table->string('alamat'); 
+            $table->string('telepon');
+            $table->string('metode'); 
 
-        // Relasi ke tabel users
-        $table->foreign('user_id')->references('id')->on('users');
-    });
+            $table->string('bukti_pembayaran')->nullable(); 
+            $table->enum('status_pembayaran', ['pending', 'lunas', 'gagal', 'diproses'])
+                  ->default('pending'); 
+            $table->timestamps();
+
+            // Relasi ke tabel users 
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        });
     }
 
     /**
